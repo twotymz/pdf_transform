@@ -16,7 +16,9 @@ namespace PDFTransform
         static void Main(string[] args)
         {
             //string path = @"C:\Users\Josh\Desktop\pdfs\headliner - Copy\venue\date\time\George AXS.pdf";
-            string path = @"C:\Users\Josh\Desktop\pdfs\headliner\venue\date\time\George TM.pdf";
+            //string path = @"C:\Users\Josh\Desktop\pdfs\headliner\venue\date\time\George TM.pdf";
+            //string path = @"C:\Users\Josh\Desktop\pdfs\George AXS.pdf";
+            string path = @"C:\Users\Josh\Desktop\pdfs\George TM.pdf";
             string text = ocr(path, 300, 300);
 
             System.IO.File.WriteAllText(@"C:\Users\Josh\Desktop\Josh\out.txt", text);
@@ -32,11 +34,12 @@ namespace PDFTransform
         {
             try
             {
-                using (var engine = new TesseractEngine(@"C:\Users\Josh\Documents\visual studio 2013\Projects\PdfToTiff\PdfToTiff\tessdata", "eng", EngineMode.Default))
+                string tessDataPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "tessdata");
+
+                using (var engine = new TesseractEngine(@".\tessdata", "eng", EngineMode.Default))
                 {
                     using (var img = Pix.LoadTiffFromMemory(bitmapToByteArray(bitmap, System.Drawing.Imaging.ImageFormat.Tiff)))
                     {
-                        var i = 1;
                         using (var page = engine.Process(img))
                         {
                             return page.GetText();
@@ -44,7 +47,7 @@ namespace PDFTransform
                     }
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
             }
 
@@ -66,12 +69,12 @@ namespace PDFTransform
                     var img = rasterizer.GetPage(desired_x_dpi, desired_y_dpi, pageNumber);
                     Bitmap bmp = new Bitmap(img);
 
-                    bmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                    Rectangle rect = new Rectangle (1904, 350, 336, 43);
-                    bmp = cropBitmap(bmp, rect);
+                    //bmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                    //Rectangle rect = new Rectangle (1904, 350, 336, 43);
+                    //bmp = cropBitmap(bmp, rect);
 
-                    //Bitmap greyscale = toGreyScale(bmp);
-                    //bmp.Save(pageFilePath);
+                    bmp = toGreyScale(bmp);
+                    bmp.Save(pageFilePath);
                     bitmaps.Add(bmp);
                 }
             }
